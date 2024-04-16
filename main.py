@@ -27,8 +27,8 @@ flags.DEFINE_integer('num_res_blocks', 2, help='# resblock in each level')
 flags.DEFINE_float('dropout', 0.1, help='dropout rate of resblock')
 # Gaussian Diffusion
 flags.DEFINE_float('beta_1', 1e-4, help='start beta value')
-flags.DEFINE_float('beta_T', 0.02, help='end beta value')
-flags.DEFINE_integer('T', 1000, help='total diffusion steps')
+flags.DEFINE_float('beta_T', 0.02, help='end beta value')  # beta逐渐变大, 扩散速度越来越快
+flags.DEFINE_integer('T', 1000, help='total diffusion steps')  # 时间步数
 flags.DEFINE_enum('mean_type', 'epsilon', ['xprev', 'xstart', 'epsilon'], help='predict variable')
 flags.DEFINE_enum('var_type', 'fixedlarge', ['fixedlarge', 'fixedsmall'], help='variance type')
 # Training
@@ -88,7 +88,7 @@ def evaluate(sampler, model):
     model.train()
     (IS, IS_std), FID = get_inception_and_fid_score(
         images, FLAGS.fid_cache, num_images=FLAGS.num_images,
-        use_torch=FLAGS.fid_use_torch, verbose=True)
+        use_torch=FLAGS.fid_use_torch, verbose=True)  # FLAGS.fid_cache 缓存了真实图片
     return (IS, IS_std), FID, images
 
 

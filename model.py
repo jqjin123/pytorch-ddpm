@@ -14,7 +14,7 @@ class TimeEmbedding(nn.Module):
     def __init__(self, T, d_model, dim):
         assert d_model % 2 == 0
         super().__init__()
-        emb = torch.arange(0, d_model, step=2) / d_model * math.log(10000)
+        emb = torch.arange(0, d_model, step=2) / d_model * math.log(10000)  # 使用的是transformer中的sin cos位置编码
         emb = torch.exp(-emb)
         pos = torch.arange(T).float()
         emb = pos[:, None] * emb[None, :]
@@ -24,7 +24,7 @@ class TimeEmbedding(nn.Module):
         emb = emb.view(T, d_model)
 
         self.timembedding = nn.Sequential(
-            nn.Embedding.from_pretrained(emb),
+            nn.Embedding.from_pretrained(emb),  # 对于嵌入层embedding有两种初始化方式，一种是直接随机初始化，另一种是使用预训练好的词向量初始化
             nn.Linear(d_model, dim),
             Swish(),
             nn.Linear(dim, dim),
@@ -211,7 +211,7 @@ class UNet(nn.Module):
         init.xavier_uniform_(self.tail[-1].weight, gain=1e-5)
         init.zeros_(self.tail[-1].bias)
 
-    def forward(self, x, t):
+    def forward(self, x, t):  # 输入是带噪图片以及时间步数
         # Timestep embedding
         temb = self.time_embedding(t)
         # Downsampling
